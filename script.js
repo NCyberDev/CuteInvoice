@@ -502,6 +502,21 @@ class InvoiceTracker {
     }
 
     // Settings management
+    toggleTaxSettings() {
+        const taxSettings = document.getElementById('taxSettings');
+        const taxToggle = document.getElementById('taxToggle');
+        
+        if (taxSettings.style.display === 'none' || taxSettings.style.display === '') {
+            taxSettings.style.display = 'block';
+            taxToggle.classList.add('rotated');
+            taxToggle.textContent = '❌';
+        } else {
+            taxSettings.style.display = 'none';
+            taxToggle.classList.remove('rotated');
+            taxToggle.textContent = '⚙️';
+        }
+    }
+
     updateVatPercentage() {
         const vatInput = document.getElementById('vatPercentageInput');
         const newVatPercentage = parseFloat(vatInput.value);
@@ -516,6 +531,8 @@ class InvoiceTracker {
         if (this.saveSettings()) {
             this.updateDashboard();
             this.showAlert(`VAT percentage updated to ${newVatPercentage}%`, 'success');
+            // Auto-close settings after successful update
+            this.toggleTaxSettings();
         }
     }
 
