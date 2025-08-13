@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cute Invoice Tracker - Makeup Artist</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💄✨ Cutie Invoice Tracker ✨💖</h1>
+            <p>Girly Pop Makeup Artist - Portugal Tax Management 🎀</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="app.showTab('dashboard')">💖 Dashboard</button>
+            <button class="tab" onclick="app.showTab('invoices')">📋 Invoices</button>
+            <button class="tab" onclick="app.showTab('add-invoice')">✨ Add Invoice</button>
+            <button class="tab" onclick="app.showTab('tax-info')">💰 Tax Info</button>
+        </div>
+        
+        <div class="content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3 id="totalInvoices">0</h3>
+                        <p>💫 Total Invoices</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3 id="totalRevenue">€0</h3>
+                        <p>💸 Total Revenue</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3 id="pendingPayments">€0</h3>
+                        <p>⏳ Pending Payments</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3 id="taxReserve">€0</h3>
+                        <p>🏦 Tax Reserve Fund</p>
+                    </div>
+                </div>
+
+                <!-- VAT Settings Section -->
+                <div class="form-section" style="margin-bottom: 30px;">
+                    <h4 style="color: #374151; margin-bottom: 15px;">⚙️ Tax Settings</h4>
+                    <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label for="vatPercentageInput" style="font-weight: 600; color: #374151;">💎 IVA (VAT) Rate:</label>
+                            <input type="number" id="vatPercentageInput" min="0" max="50" step="0.1" style="width: 80px; padding: 8px; border: none; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);">
+                            <span style="color: #6b7280;">%</span>
+                        </div>
+                        <button class="btn" onclick="app.updateVatPercentage()" style="padding: 8px 16px; font-size: 14px;">💾 Update</button>
+                    </div>
+                </div>
+                
+                <div class="tax-breakdown">
+                    <h4>🌸 Estimated Tax Obligations (2024 Rates) 🌸</h4>
+                    <div class="tax-item">
+                        <span><strong>💎 IVA (VAT) - <span id="vatPercentageDisplay">23%</span>:</strong></span>
+                        <span id="ivaAmount">€0</span>
+                    </div>
+                    <div class="tax-item">
+                        <span><strong>✨ Income Tax (estimated average):</strong></span>
+                        <span id="incomeTaxAmount">€0</span>
+                    </div>
+                    <div class="tax-item" style="border-top: 2px solid #e9d5ff; font-weight: bold;">
+                        <span><strong>💖 TOTAL TO RESERVE:</strong></span>
+                        <span id="totalTaxAmount">€0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Invoices Tab -->
+            <div id="invoices" class="tab-content">
+                <div style="margin-bottom: 20px;">
+                    <button class="btn" onclick="app.exportData()">📥 Export Data 🎀</button>
+                    <button class="btn" onclick="app.importData()" id="importData">📤 Import Data 💖</button>
+                    <button class="btn btn-danger" onclick="app.clearAllData()">🗑️ Clear All Data 💔</button>
+                </div>
+                <table class="invoice-table" id="invoiceTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Service</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Due Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoiceTableBody">
+                        <!-- Invoices will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Add Invoice Tab -->
+            <div id="add-invoice" class="tab-content">
+                <div class="form-section">
+                    <h3 style="margin-bottom: 20px; color: #fd79a8;">🌸 Add New Invoice 🌸</h3>
+                    <form id="invoiceForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="clientName">💅 Client Name</label>
+                                <input type="text" id="clientName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="serviceType">✨ Service Type</label>
+                                <select id="serviceType" required>
+                                    <option value="">Select Service... 💖</option>
+                                    <option value="Bridal Makeup">👰 Bridal Makeup</option>
+                                    <option value="Evening Makeup">🌙 Evening Makeup</option>
+                                    <option value="Photoshoot Makeup">📸 Photoshoot Makeup</option>
+                                    <option value="Special Event">🎉 Special Event</option>
+                                    <option value="Makeup Lesson">📚 Makeup Lesson</option>
+                                    <option value="Other">🎀 Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="amount">💰 Amount (€)</label>
+                                <input type="number" id="amount" step="0.01" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="invoiceDate">📅 Invoice Date</label>
+                                <input type="date" id="invoiceDate" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dueDate">⏰ Due Date</label>
+                                <input type="date" id="dueDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="status">🎀 Payment Status</label>
+                                <select id="status" required>
+                                    <option value="pending">⏳ Pending</option>
+                                    <option value="sent">📤 Sent</option>
+                                    <option value="paid">💖 Paid</option>
+                                    <option value="overdue">😭 Overdue</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="notes">📝 Notes (Optional)</label>
+                                <input type="text" id="notes" placeholder="Additional notes... 💭">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn">💾 Add Invoice 🎀</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Tax Info Tab -->
+            <div id="tax-info" class="tab-content">
+                <div class="form-section">
+                    <h3 style="margin-bottom: 20px; color: #374151;">🇵🇹 Portuguese Tax Information for Makeup Artists (2024) 🌸</h3>
+                    
+                    <div class="info-section">
+                        <h4>💎 IVA (VAT) - Value Added Tax</h4>
+                        <p><strong>Rate:</strong> 23% (general rate)</p>
+                        <p><strong>Threshold:</strong> Must register if turnover > €14,500 (€15,000 from 2025)</p>
+                        <p><strong>Payment:</strong> Quarterly payments (you mentioned you pay every 3 months)</p>
+                        <p><strong>Deadline:</strong> 7 days after the reporting period ends</p>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h4>✨ Income Tax (IRS) - 2024 Rates</h4>
+                        <p><strong>Tax-free allowance:</strong> €4,104</p>
+                        <p><strong>Progressive rates:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Up to €7,703: 13.25%</li>
+                            <li>€7,704–€11,623: 18%</li>
+                            <li>€11,624–€16,472: 23%</li>
+                            <li>€16,473–€21,131: 26%</li>
+                            <li>And higher brackets up to 48%</li>
+                        </ul>
+                    </div>
+                    
+
+                    
+                    <div class="recommendation-box">
+                        <h4>💡 Recommended Tax Strategy</h4>
+                        <p><strong>Set aside approximately 35-40% of each invoice</strong> to cover:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>IVA (VAT): 23%</li>
+                            <li>Income Tax: ~15-20% (depends on total income)</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><em>This tracker calculates these automatically for you!</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
