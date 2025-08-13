@@ -193,6 +193,11 @@ class InvoiceTracker {
     }
 
     displayInvoices() {
+        this.displayDesktopTable();
+        this.displayMobileCards();
+    }
+
+    displayDesktopTable() {
         const tbody = document.getElementById('invoiceTableBody');
         if (!tbody) return;
         
@@ -225,6 +230,60 @@ class InvoiceTracker {
             } else if (invoice.status === 'overdue') {
                 row.classList.add('invoice-overdue');
             }
+        });
+    }
+
+    displayMobileCards() {
+        const cardsContainer = document.getElementById('invoiceCards');
+        if (!cardsContainer) return;
+        
+        cardsContainer.innerHTML = '';
+        
+        if (this.invoices.length === 0) {
+            cardsContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: #9ca3af;">No invoices yet. Add your first invoice! 💫</div>';
+            return;
+        }
+        
+        this.invoices.forEach(invoice => {
+            const card = document.createElement('div');
+            card.className = `invoice-card ${invoice.status === 'sent' ? 'invoice-sent' : ''} ${invoice.status === 'overdue' ? 'invoice-overdue' : ''}`;
+            
+            card.innerHTML = `
+                <div class="invoice-card-header">
+                    <div class="invoice-card-client">${this.escapeHtml(invoice.clientName)}</div>
+                    <div class="invoice-card-amount">€${invoice.amount.toFixed(2)}</div>
+                </div>
+                
+                <div class="invoice-card-details">
+                    <div class="invoice-card-detail">
+                        <div class="invoice-card-detail-label">Service</div>
+                        <div class="invoice-card-detail-value">${this.escapeHtml(invoice.serviceType)}</div>
+                    </div>
+                    <div class="invoice-card-detail">
+                        <div class="invoice-card-detail-label">Invoice Date</div>
+                        <div class="invoice-card-detail-value">${new Date(invoice.invoiceDate).toLocaleDateString('pt-PT')}</div>
+                    </div>
+                    <div class="invoice-card-detail">
+                        <div class="invoice-card-detail-label">Due Date</div>
+                        <div class="invoice-card-detail-value">${new Date(invoice.dueDate).toLocaleDateString('pt-PT')}</div>
+                    </div>
+                    <div class="invoice-card-detail">
+                        <div class="invoice-card-detail-label">Status</div>
+                        <div class="invoice-card-detail-value">
+                            <span class="status-${invoice.status} clickable-status" onclick="app.showStatusDropdown(${invoice.id}, this)" title="Click to change status">
+                                ${this.getStatusDisplay(invoice.status)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="invoice-card-actions">
+                    <button class="btn" onclick="app.editInvoice(${invoice.id})" style="background: #a78bfa;">✏️ Edit</button>
+                    <button class="btn btn-danger" onclick="app.deleteInvoice(${invoice.id})">🗑️ Delete</button>
+                </div>
+            `;
+            
+            cardsContainer.appendChild(card);
         });
     }
 
